@@ -8,8 +8,8 @@ const {body, validationResult } = require('express-validator');
  */
 
 router.get('/', (req, res ) => {
-    res.render('contato', {
-      title: 'Formulário de Contato',
+    res.render('cadastro', {
+      title: 'Formulário de Cadastro de usuário',
       data: {},
       errors: {}
     });
@@ -30,24 +30,21 @@ router.get('/', (req, res ) => {
         body('email')
           .trim().isEmail().withMessage('E-mail inválido.')
           .normalizeEmail(),
-        body('idade')
-          .trim().optional({ checkFalsy: true})
-          .isInt({ min: 1, max: 120 }).withMessage('Idade deve ser um inteiro entre 1 e 120.')
-          .toInt(),
+        body('data_nascimento')
+          .isISO8601().withMessage('Data inválida.')
+          .custom((value) => new Date(value) <= new Date())
+          .withMessage('A data de nascimento não pode ser no futuro.'),
         body('genero')
-          .isIn(['', 'feminino', 'masculino', 'nao-binario', 'prefiro-nao-informar'])
-          .withMessage('Gênero inválido.'),
-        body('interesses')
-          .optional({ checkFalsy: true })
-          .customSanitizer(v => Array.isArray(v) ? v : (v ? [v] : [])) // sempre array
-          .custom((arr) => {
-            const valid = ['node', 'express', 'ejs', 'frontend', 'backend'];
-
-            return arr.every(x => valid.includes(x));
-          }).withMessage('Interresse inválido.'),
-        body('mensagem')
-          .trim().isLength({ min: 10, max: 500}).withMessage('Mensagem deve ter entre 10 e 500 caracteres.')
-          .escape(),
+          .isIn(['masculino', 'feminino', 'outro']).withMessage('Selecione um gênero válido.'),
+        body('telefone')
+          .matches(/^\d{10,11}$/).withMessage('Telefone deve conter apenas números e ter 10 ou 11 dígitos.'),
+        body('senha')
+          .isLength({ min: 8 }).withMessage('A senha deve ter pelo menos 8 caracteres.')
+          .matches(/[A-Za-z]/).withMessage('A senha deve conter no mínimo uma letra.')
+          .matches(/\d/).withMessage('A senha deve conter no mínimo um número.'),
+        body('confirmacao_senha')
+          .custom((value, { req }) => value === req.body.senha)
+          .withMessage('As senhas não coincidem.'),
         body('aceite')
           .equals('on').withMessage('Você deve aceitar os termos para continuar.')
     ],
@@ -60,10 +57,11 @@ router.get('/', (req, res ) => {
         const data = {
             nome: req.body.nome,
             email: req.body.email,
-            idade: req.body.idade,
-            genero: req.body.genero || '',
-            interesses: req.body.interesses || [],
-            mensagem: req.body.mensagem,
+            data_nascimento: req.body.data_nascimento,
+            genero: req.body.genero,
+            telefone: req.body.telefone,
+            senha: req.body.senha,
+            confirmacao_senha: req.body.confirmacao_senha,
             aceite: req.body.aceite === 'on'
 
 
@@ -74,7 +72,7 @@ router.get('/', (req, res ) => {
 
             const mapped = errors.mapped(); //  { campo: { msg, param,...} }
 
-            return res.status(400).render('contato', {
+            return res.status(400).render('cadastro', {
                 title: 'Formulário',
                 data,
                 errors: mapped
@@ -84,7 +82,7 @@ router.get('/', (req, res ) => {
         // Aqui você poderia persistir no banco, enviar e-mail, etc.
        
 
-        return res.render('sucesso', {
+        return res.render('validacaoCadastro', {
             title: 'Enviado com sucesso',
             data
         });

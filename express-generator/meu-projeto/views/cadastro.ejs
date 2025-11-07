@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+
+    <style>
+        .error { color: #b00020; font-size: 0.95em; margin-top: 4px;}
+        .field { margin-bottom: 1rem;}
+        .field input[type="text"],
+        .field input[type="email"],
+        .field input[type="date"],
+        .field input[type="tel"],
+        .field input[type="password"],
+        .field select,
+        .field legend,
+        .field textarea { width: 100%; max-width: 520px; padding: 8px;}
+        .hint { color: #555; font-size: .9em;}
+    </style>
+</head>
+<body>
+    <h1>Cadastro de usuário</h1>
+    <form method="post" action="/cadastro" novalidate>
+      <!-- Nome -->
+      <div class="field">
+        <label for="nome">Nome*</label><br/>
+        <input id="nome" name="nome" type="text" value="<%= data.nome || '' %>" required minlength="3" maxlength="60" />
+        <% if (errors.nome) { %><div class="error"><%=errors.nome.msg %></div><% } %>
+
+        
+      </div>
+
+      <!-- E-mail -->
+      
+      <div class="field">
+        <label for="email">E-mail*</label><br/>
+
+        <input id="email" name="email" type="email" value="<%= data.email || '' %>" required />
+
+        <% if (errors.email) { %><div class="error"><%=errors.email.msg %></div><%  } %>
+
+      </div>
+
+      <!-- Data de Nascimento  -->
+
+      <div class="field">
+        <label for="data_nascimento">Data de Nascimento </label><br/>
+        <input id="data_nascimento" name="data_nascimento" type="date"  value="<%= (data.nascimento || '') %>"/>
+        
+
+        <% if (errors.data_nascimento) { %><div class="error"><%=
+        errors.data_nascimento.msg %></div><% } %>
+
+      </div>
+
+      <!-- Gênero (radio) -->
+    <fieldset class="field">
+      <legend>Gênero*</legend>
+
+      <label><input type="radio" name="genero" value="masculino" <%= data.genero === 'masculino' ? 'checked' : '' %>> Masculino</label><br/>
+      <label><input type="radio" name="genero" value="feminino" <%= data.genero === 'feminino' ? 'checked' : '' %>> Feminino</label><br/>
+      <label><input type="radio" name="genero" value="outro" <%= data.genero === 'outro' ? 'checked' : '' %>> Outro</label><br/>
+      
+      <% if (errors.genero) { %><div class="error"><%= errors.genero.msg %></div><% } %>
+    </fieldset>
+
+      <!-- Telefone (opcional)-->
+       <div class="field">
+         <label for="telefone">Telefone</label><br/>
+         
+         <input id="telefone" name="telefone" type="tel" value="<%= (data.telefone ?? '')  %>">
+
+         <div class="hint">O número de telefone deve ter 10-11 dígitos.</div>
+
+          <% if (errors.nascimento) { %><div class="error"><%=
+           errors.idade.msg %></div><% } %>
+
+       </div>
+
+       <!-- Senha -->
+       <div class="field">
+         <label for="senha">Senha</label><br/>
+
+         <input id="senha" name="senha" type="password" value="<%= data.nome || '' %>" required minlength="8" >
+
+         <div class="hint">Mínimo 8 caracteres, incluindo letras e números.</div>
+
+         <% if (errors.senha) { %><div class="error"><%=errors.senha.msg %></div><%  } %>
+       </div>
+
+       <!-- Confirmação da senha -->
+       <div class="field">
+         <label for="confirmacao_senha">Senha</label><br/>
+
+         <input id="confirmacao_senha" name="confirmacao_senha" type="password" value="<%= data.nome || '' %>" required  >
+
+         <% if (errors.confirmacao_senha) { %><div class="error"><%=errors.confirmacao_senha.msg %></div><%  } %>
+       </div>
+      
+
+      <!-- Checkbox único (aceite) -->
+      
+      <div class="field">
+
+        <label >
+            <input type="checkbox" name="aceite" <%= data.aceite ?'checked' : '' %> />
+            Concordo com os termos de uso*
+        </label>
+
+        <% if (errors.aceite) { %><div class="error"><%=errors.aceite.msg %></div><% } %>
+
+      </div>
+
+      <button type="submit">Enviar</button>
+
+    </form>
+    
+</body>
+</html>
