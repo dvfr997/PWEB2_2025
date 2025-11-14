@@ -74,7 +74,7 @@
             <form
               action="/contato/<%= c.id %>/update"
               method="get"
-              
+              onsubmit="return confirm('Tem certeza que deseja atualizar o contato <%= c.nome %>?');"
             >
               <button type="submit">Editar</button>
             </form>
